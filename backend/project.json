@@ -1,57 +1,43 @@
 {
-  "id": "gb-0050",
-  "direction": "因子核算与分发",
-  "title": "棠原试验室碳因子结算册",
-  "slug": "carbon-factors",
-  "algorithm": "单位转换、因子版本冻结、用量×因子与部门透视",
-  "entities": "Activity / EmissionFactor / CarbonRun / Review / DeliverySchedule",
-  "scenario": "合成用电/燃料/出行活动→因子核算与差异说明→站内周期结算；范围声明与缺因子拒绝",
-  "visual": "因子样本册、松绿赤陶",
-  "oracle": "kWh/MWh单位换算手算；缺单位因子拒绝；因子更新旧报告不变",
+  "id": "gb-0052",
+  "direction": "碳感知排程与启用",
+  "title": "澄湖实验室碳感知排程台",
+  "slug": "carbon-aware-lab",
+  "algorithm": "逐小时负荷叠加的分支限界搜索：总排放最低，同分按实验编号取最早开工序列",
+  "entities": "GridHour / Experiment / SolveRun / PlanMeta",
+  "scenario": "录入逐小时电力因子、基础负荷、容量上限与实验可开工窗口→冻结排队求解→核对各实验时段与排放量→启用现行方案；源数据更新后待生效方案失效",
+  "visual": "逐小时负荷谱、松绿赤陶",
+  "oracle": "逐小时叠加负荷×因子手算；同分按编号字典序最早开工；源数据变更后旧方案不可启用；无解保留现行方案",
   "frontend": 18254,
   "backend": 19254,
   "db_port": 17754,
   "database": "PostgreSQL16",
   "batch": 2,
-  "label": "活动用量",
-  "policy_label": "核算因子版本",
-  "fields": {
-    "period": "月份",
-    "department": "研究部门",
-    "activity": "活动类型",
-    "quantity": "活动量",
-    "unit": "单位"
+  "label": "实验排程",
+  "caption": "逐小时负荷 × 电力因子 · 输入随方案冻结",
+  "unit": "kgCO₂e",
+  "horizon_hours": 24,
+  "limits": {
+    "max_hours": 48,
+    "max_experiments": 12,
+    "max_windows": 8
   },
-  "example": {
-    "period": "2026-11",
-    "department": "材料试验室",
-    "activity": "电力",
-    "quantity": 1.5,
-    "unit": "MWh"
+  "grid_example": {
+    "hour": 13,
+    "factor": 0.302,
+    "base_load": 14.5,
+    "capacity": 40
   },
-  "policy": {
-    "version": "因子-v1",
-    "scope": "合成研究用活动量；仅覆盖电力、柴油、通勤，不是组织完整碳盘查",
-    "factors": {
-      "电力": {
-        "unit": "kWh",
-        "kg_per_unit": 0.57
-      },
-      "柴油": {
-        "unit": "L",
-        "kg_per_unit": 2.68
-      },
-      "通勤": {
-        "unit": "km",
-        "kg_per_unit": 0.12
-      }
-    }
+  "experiment_example": {
+    "code": "EXP-09",
+    "name": "新实验",
+    "windows": [[8, 18]],
+    "hours": 2,
+    "power": 5
   },
   "colors": [
-    "0.94 0.025 120",
-    "0.28 0.055 160",
-    "0.53 0.12 42"
-  ],
-  "caption": "活动量 × 因子 · 单位与范围随报告保存",
-  "unit": "kgCO₂e"
+    "0.95 0.02 130",
+    "0.27 0.05 175",
+    "0.55 0.11 150"
+  ]
 }

@@ -1,7 +1,7 @@
-name: ${COMPOSE_PROJECT_NAME:-carbon-factors}
+name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}
 services:
   db:
-    container_name: ${COMPOSE_PROJECT_NAME:-carbon-factors}-db
+    container_name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}-db
     image: postgres:16-alpine
     environment: {POSTGRES_USER: app, POSTGRES_PASSWORD: appdev, POSTGRES_DB: business}
     healthcheck:
@@ -13,7 +13,7 @@ services:
     volumes: ["db-data:/var/lib/postgresql/data"]
   redis:
     image: redis:7-alpine
-    container_name: ${COMPOSE_PROJECT_NAME:-carbon-factors}-redis
+    container_name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}-redis
     command: redis-server --appendonly yes
     volumes: ["redis-data:/data"]
     healthcheck:
@@ -23,11 +23,11 @@ services:
       retries: 30
   backend:
     build: ./backend
-    container_name: ${COMPOSE_PROJECT_NAME:-carbon-factors}-backend
+    container_name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}-backend
     environment: &backend-env
       DATABASE_URL: postgresql+psycopg://app:appdev@db:5432/business
       REDIS_URL: redis://redis:6379/0
-      JWT_SECRET: ${JWT_SECRET:-carbon-factors-local-demo-change-before-production-2026}
+      JWT_SECRET: ${JWT_SECRET:-carbon-aware-lab-local-demo-change-before-production-2026}
       SEED_DEMO: "true"
     ports: ["${BACKEND_PORT:-19254}:8000"]
     volumes: ["report-files:/app/artifacts"]
@@ -41,7 +41,7 @@ services:
       retries: 45
   worker:
     build: ./backend
-    container_name: ${COMPOSE_PROJECT_NAME:-carbon-factors}-worker
+    container_name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}-worker
     command: python -m src.worker
     environment: *backend-env
     volumes: ["report-files:/app/artifacts"]
@@ -56,7 +56,7 @@ services:
       retries: 20
   frontend:
     build: ./frontend
-    container_name: ${COMPOSE_PROJECT_NAME:-carbon-factors}-frontend
+    container_name: ${COMPOSE_PROJECT_NAME:-carbon-aware-lab}-frontend
     ports: ["${FRONTEND_PORT:-18254}:80"]
     depends_on:
       backend: {condition: service_healthy}
